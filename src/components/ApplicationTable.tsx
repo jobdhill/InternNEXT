@@ -14,6 +14,7 @@ type Application = {
 type Column = {
   label: string
   key: keyof Application
+  type?: "text" | "date"
 }
 
 type EditableColumn = Exclude<keyof Application, "id">
@@ -57,9 +58,9 @@ export default function ApplicationTable() {
 
   return (
     <div className="w-full h-full overflow-x-auto space-y-3">
-      <table className="w-full border-separate border-spacing-w md:border-spacing-4">
+      <table className="w-full  border-spacing-w md:border-spacing-4 border-collapse">
         <thead>
-          <tr className="bg-gray-300 rounded-2xl">
+          <tr className="bg-gray-300 ">
             {headerData.map((header) => (
               <th key={header}>{header}</th>
             ))}
@@ -75,6 +76,7 @@ export default function ApplicationTable() {
                     application.id
                   ) : (
                     <input
+                    type={column.type ?? "text"}
                       value={application[column.key]}
                       onChange={(event) =>
                         updateCell(
@@ -120,9 +122,9 @@ const columns: Column[] = [
   { label: "#", key: "id" },
   { label: "Company", key: "company" },
   { label: "Role", key: "role" },
-  { label: "Applied", key: "applied" },
+  { label: "Applied", key: "applied", type: "date" },
   { label: "Status", key: "status" },
   { label: "Location", key: "location" },
   { label: "Resume", key: "resume" },
-  { label: "Notes", key: "notes" },
+  { label: "--", key: "notes" },
 ]
