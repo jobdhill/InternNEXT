@@ -11,14 +11,6 @@ type Application = {
   notes: string
 }
 
-type Column = {
-  label: string
-  key: keyof Application
-  type?: "text" | "date"
-}
-
-type EditableColumn = Exclude<keyof Application, "id">
-
 const createEmptyApplication = (id: number): Application => ({
   id,
   company: "",
@@ -35,17 +27,9 @@ export default function ApplicationTable() {
     createEmptyApplication(1),
   ])
 
-  const updateCell = (
-    rowId: number,
-    field: EditableColumn,
-    value: string,
-  ) => {
+  const updateApplication = (id: number, changes: Partial<Application>) => {
     setApplications((previous) =>
-      previous.map((application) =>
-        application.id === rowId
-          ? { ...application, [field]: value }
-          : application,
-      ),
+      previous.map((app) => (app.id === id ? { ...app, ...changes } : app)),
     )
   }
 
@@ -58,39 +42,120 @@ export default function ApplicationTable() {
 
   return (
     <div className="w-full h-full overflow-x-auto space-y-3">
-      <table className="w-full  border-spacing-w md:border-spacing-4 border-collapse">
-        <thead>
-          <tr className="bg-gray-300 ">
-            {headerData.map((header) => (
-              <th key={header}>{header}</th>
-            ))}
+      <table className="w-full border-collapse">
+        <thead className="font-manrope">
+          <tr className="bg-[#F0F2F4] h-0.5">
+            <th className="p-2 text-left border-b border-r border-neutral-400/50">#</th>
+            <th className="p-2 text-left border-b border-r border-neutral-400/50">Company</th>
+            <th className="p-2 text-left border-b border-r border-neutral-400/50">Role</th>
+            <th className="p-2 text-left border-b border-r border-neutral-400/50">Applied</th>
+            <th className="p-2 text-left border-b border-r border-neutral-400/50">Status</th>
+            <th className="p-2 text-left border-b border-r border-neutral-400/50">Location</th>
+            <th className="p-2 text-left border-b border-r border-neutral-400/50">Resume</th>
+            <th className="p-2 text-left border-b border-r border-neutral-400/50">Notes</th>
           </tr>
         </thead>
 
         <tbody>
-          {applications.map((application) => (
-            <tr key={application.id} className="bg-white">
-              {columns.map((column) => (
-                <td key={column.key} className="p-1 border-b">
-                  {column.key === "id" ? (
-                    application.id
-                  ) : (
-                    <input
-                    type={column.type ?? "text"}
-                      value={application[column.key]}
-                      onChange={(event) =>
-                        updateCell(
-                          application.id,
-                          column.key as EditableColumn,
-                          event.target.value,
-                        )
-                      }
-                      placeholder={column.label}
-                      className="w-full p-1"
-                    />
-                  )}
-                </td>
-              ))}
+          {applications.map((app) => (
+            <tr key={app.id} className="bg-white border-b border-r">
+              <td className="p-1 border-b border-r text-center border-neutral-400/50">{app.id}</td>
+
+              <td className="p-1 border-b border-r border-neutral-400/50">
+                <input
+                  className="w-full p-1"
+                  placeholder="Company"
+                  value={app.company}
+                  onChange={(e) =>
+                    updateApplication(app.id, { company: e.target.value })
+                  }
+                />
+              </td>
+
+              <td className="p-1 border-b border-r border-neutral-400/50">
+                <input
+                  className="w-full p-1"
+                  placeholder="Role"
+                  value={app.role}
+                  onChange={(e) =>
+                    updateApplication(app.id, { role: e.target.value })
+                  }
+                />
+              </td>
+
+              <td className="p-1 border-b border-r border-neutral-400/50">
+                <input
+                  type="date"
+                  className="w-full p-1"
+                  value={app.applied}
+                  onChange={(e) =>
+                    updateApplication(app.id, { applied: e.target.value })
+                  }
+                />
+              </td>
+
+              <td className="p-1 border-b border-r border-neutral-400/50">
+              <select
+  className={`w-full p-1 ${
+    app.status === "Offer"
+      ? "bg-green-400"
+      : app.status === "Rejected"
+      ? "bg-red-600"
+      : app.status === "Applied"
+      ? "bg-gray-200"
+      : app.status === "OA"
+      ? "bg-yellow-200"
+      : app.status === "Interview"
+      ? "bg-blue-300"
+      : app.status === "Ghosted"
+      ? "bg-orange-500"
+      : ""
+  }`}
+  value={app.status}
+  onChange={(e) => updateApplication(app.id, { status: e.target.value })}
+>
+  <option>---</option>
+  <option>Applied</option>
+  <option>OA</option>
+  <option>Interview</option>
+  <option>Offer</option>
+  <option>Rejected</option>
+  <option>Ghosted</option>
+</select>
+              </td>
+
+              <td className="p-1 border-b border-r border-neutral-400/50">
+                <input
+                  className="w-full p-1"
+                  placeholder="Location"
+                  value={app.location}
+                  onChange={(e) =>
+                    updateApplication(app.id, { location: e.target.value })
+                  }
+                />
+              </td>
+
+              <td className="p-1 border-b border-r border-neutral-400/50">
+                <input
+                  className="w-full p-1"
+                  placeholder="Resume Name"
+                  value={app.resume}
+                  onChange={(e) =>
+                    updateApplication(app.id, { resume: e.target.value })
+                  }
+                />
+              </td>
+
+              <td className="p-1 border-b border-neutral-400/50">
+                <input
+                  className="w-full p-1"
+                  placeholder="Notes"
+                  value={app.notes}
+                  onChange={(e) =>
+                    updateApplication(app.id, { notes: e.target.value })
+                  }
+                />
+              </td>
             </tr>
           ))}
         </tbody>
@@ -99,32 +164,10 @@ export default function ApplicationTable() {
       <button
         type="button"
         onClick={addRow}
-        className="bg-blue-600 text-white rounded px-3 py-2 hover:bg-blue-700"
+        className="bg-[#F0F2F4] text-black rounded px-4 py-2"
       >
-        Add Row
+        + Add Application
       </button>
     </div>
   )
 }
-
-
-const headerData = [
-        "#",
-        "Company",
-        "Role",
-        "Applied",
-        "Status",
-        "Location",
-        "Resume",
-        "Notes"
-]
-const columns: Column[] = [
-  { label: "#", key: "id" },
-  { label: "Company", key: "company" },
-  { label: "Role", key: "role" },
-  { label: "Applied", key: "applied", type: "date" },
-  { label: "Status", key: "status" },
-  { label: "Location", key: "location" },
-  { label: "Resume", key: "resume" },
-  { label: "--", key: "notes" },
-]
