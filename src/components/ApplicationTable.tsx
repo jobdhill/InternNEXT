@@ -1,170 +1,141 @@
-import { useState } from "react"
+import type { Application } from "../types/application"
+import { EMPTY_STATUS } from "../types/application"
 
-type Application = {
-  id: number
-  company: string
-  role: string
-  applied: string
-  status: string
-  location: string
-  resume: string
-  notes: string
+type Props = {
+  applications: Application[]
+  onUpdate: (id: number, changes: Partial<Application>) => void
+  onAddRow: () => void
 }
 
-const createEmptyApplication = (id: number): Application => ({
-  id,
-  company: "",
-  role: "",
-  applied: "",
-  status: "",
-  location: "",
-  resume: "",
-  notes: "",
-})
-
-export default function ApplicationTable() {
-  const [applications, setApplications] = useState<Application[]>([
-    createEmptyApplication(1),
-  ])
-
-  const updateApplication = (id: number, changes: Partial<Application>) => {
-    setApplications((previous) =>
-      previous.map((app) => (app.id === id ? { ...app, ...changes } : app)),
-    )
-  }
-
-  const addRow = () => {
-    setApplications((previous) => [
-      ...previous,
-      createEmptyApplication(previous.length + 1),
-    ])
-  }
-
+export default function ApplicationTable({
+  applications,
+  onUpdate,
+  onAddRow,
+}: Props) {
   return (
     <div className="w-full h-full overflow-x-auto space-y-3">
+    <div className="rounded-xl shadow-sm overflow-hidden bg-white border border-[#F0F0F0]">
       <table className="w-full border-collapse">
-        <thead className="font-manrope">
-          <tr className="bg-[#F0F2F4] h-0.5">
-            <th className="p-2 text-left border-b border-r border-neutral-400/50">#</th>
-            <th className="p-2 text-left border-b border-r border-neutral-400/50">Company</th>
-            <th className="p-2 text-left border-b border-r border-neutral-400/50">Role</th>
-            <th className="p-2 text-left border-b border-r border-neutral-400/50">Applied</th>
-            <th className="p-2 text-left border-b border-r border-neutral-400/50">Status</th>
-            <th className="p-2 text-left border-b border-r border-neutral-400/50">Location</th>
-            <th className="p-2 text-left border-b border-r border-neutral-400/50">Resume</th>
-            <th className="p-2 text-left border-b border-r border-neutral-400/50">Notes</th>
+        <thead className="font-manrope text-[#9CA3AF]">
+          <tr className=" h-0.5">
+            <th className="p-2 text-left  border-b bg-[#FAFAFA] border-[#F0F0F0]">#</th>
+            <th className="p-2 text-left border-b  bg-[#FAFAFA] border-[#F0F0F0]">COMPANY</th>
+            <th className="p-2 text-left border-b  bg-[#FAFAFA] border-[#F0F0F0]">ROLE</th>
+            <th className="p-2 text-left border-b  bg-[#FAFAFA] border-[#F0F0F0]">APPLIED</th>
+            <th className="p-2 text-left border-b bg-[#FAFAFA] border-[#F0F0F0]">STATUS</th>
+            <th className="p-2 text-left border-b bg-[#FAFAFA] border-[#F0F0F0]">LOCATION</th>
+            <th className="p-2 text-left border-b bg-[#FAFAFA] border-[#F0F0F0]">RESUME</th>
+            <th className="p-2 text-left border-b bg-[#FAFAFA] border-[#F0F0F0]">NOTES</th>
           </tr>
         </thead>
 
         <tbody>
           {applications.map((app) => (
-            <tr key={app.id} className="bg-white border-b border-r">
-              <td className="p-1 border-b border-r text-center border-neutral-400/50">{app.id}</td>
+            <tr key={app.id} className="bg-white border-[#F7F7F7]">
+              <td className="p-1 border-b border-r text-center border-[#F0F0F0] ">{app.id}</td>
 
-              <td className="p-1 border-b border-r border-neutral-400/50">
+              <td className="p-1 border-b border-r border-[#F0F0F0]">
                 <input
                   className="w-full p-1"
                   placeholder="Company"
                   value={app.company}
                   onChange={(e) =>
-                    updateApplication(app.id, { company: e.target.value })
+                    onUpdate(app.id, { company: e.target.value })
                   }
                 />
               </td>
 
-              <td className="p-1 border-b border-r border-neutral-400/50">
+              <td className="p-1 border-b border-r border-[#F0F0F0]">
                 <input
                   className="w-full p-1"
                   placeholder="Role"
                   value={app.role}
-                  onChange={(e) =>
-                    updateApplication(app.id, { role: e.target.value })
-                  }
+                  onChange={(e) => onUpdate(app.id, { role: e.target.value })}
                 />
               </td>
 
-              <td className="p-1 border-b border-r border-neutral-400/50">
+              <td className="p-1 border-b border-r border-[#F0F0F0]">
                 <input
                   type="date"
                   className="w-full p-1"
                   value={app.applied}
                   onChange={(e) =>
-                    updateApplication(app.id, { applied: e.target.value })
+                    onUpdate(app.id, { applied: e.target.value })
                   }
                 />
               </td>
 
-              <td className="p-1 border-b border-r border-neutral-400/50">
-              <select
-  className={`w-full p-1 ${
-    app.status === "Offer"
-      ? "bg-green-400"
-      : app.status === "Rejected"
-      ? "bg-red-600"
-      : app.status === "Applied"
-      ? "bg-gray-200"
-      : app.status === "OA"
-      ? "bg-yellow-200"
-      : app.status === "Interview"
-      ? "bg-blue-300"
-      : app.status === "Ghosted"
-      ? "bg-orange-500"
-      : ""
-  }`}
-  value={app.status}
-  onChange={(e) => updateApplication(app.id, { status: e.target.value })}
->
-  <option>---</option>
-  <option>Applied</option>
-  <option>OA</option>
-  <option>Interview</option>
-  <option>Offer</option>
-  <option>Rejected</option>
-  <option>Ghosted</option>
-</select>
+              <td className="p-1 border-b border-r border-[#F0F0F0]">
+                <select
+                  className={`w-full p-1 ${
+                    app.status === "Offer"
+                      ? "bg-[#D1FAE5] text-[#065F46]"
+                      : app.status === "Rejected"
+                        ? "bg-[#FEE2E2] text-[#991B1B]"
+                        : app.status === "Applied"
+                          ? "bg-[#F3F4F6] text-[#6B7280]"
+                          : app.status === "OA"
+                            ? "bg-[#FEF3C7] text-[#78350F]"
+                            : app.status === "Interview"
+                              ? "bg-[#E0F2FE] text-[#0369A1]"
+                              : app.status === "Ghosted"
+                                ? "bg-[#FEF3C7] text-[#78350F]"
+                                : ""
+                  }`}
+                  value={app.status}
+                  onChange={(e) =>
+                    onUpdate(app.id, { status: e.target.value })
+                  }
+                >
+                  <option value="">{EMPTY_STATUS}</option>
+                  <option>Applied</option>
+                  <option>OA</option>
+                  <option>Interview</option>
+                  <option>Offer</option>
+                  <option>Rejected</option>
+                  <option>Ghosted</option>
+                </select>
               </td>
 
-              <td className="p-1 border-b border-r border-neutral-400/50">
+              <td className="p-1 border-b border-r border-[#F0F0F0]">
                 <input
                   className="w-full p-1"
                   placeholder="Location"
                   value={app.location}
                   onChange={(e) =>
-                    updateApplication(app.id, { location: e.target.value })
+                    onUpdate(app.id, { location: e.target.value })
                   }
                 />
               </td>
 
-              <td className="p-1 border-b border-r border-neutral-400/50">
+              <td className="p-1 border-b border-r border-[#F0F0F0]">
                 <input
                   className="w-full p-1"
                   placeholder="Resume Name"
                   value={app.resume}
                   onChange={(e) =>
-                    updateApplication(app.id, { resume: e.target.value })
+                    onUpdate(app.id, { resume: e.target.value })
                   }
                 />
               </td>
 
-              <td className="p-1 border-b border-neutral-400/50">
+              <td className="p-1 border-b border-r border-[#F0F0F0]">
                 <input
                   className="w-full p-1"
-                  placeholder="Notes"
+                  placeholder="---"
                   value={app.notes}
-                  onChange={(e) =>
-                    updateApplication(app.id, { notes: e.target.value })
-                  }
+                  onChange={(e) => onUpdate(app.id, { notes: e.target.value })}
                 />
               </td>
             </tr>
           ))}
         </tbody>
       </table>
-
+    </div>
       <button
         type="button"
-        onClick={addRow}
-        className="bg-[#F0F2F4] text-black rounded px-4 py-2"
+        onClick={onAddRow}
+        className="bg-[#F0F2F4] text-black rounded px-4 py-2 hover:bg-gray-300"
       >
         + Add Application
       </button>
