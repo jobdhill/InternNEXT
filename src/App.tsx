@@ -7,6 +7,7 @@ import {
   createEmptyApplication,
   nextApplicationId,
 } from "./types/application"
+import SearchBox from "./components/SearchBox"
 
 export default function App() {
   const [applications, setApplications] = useState<Application[]>(() => [
@@ -32,6 +33,7 @@ export default function App() {
   return (
     <div className="min-h-screen p-6 font-manrope bg-[#F8F8FA]">
       <ApplicationStats applications={applications} />
+      <SearchBox/>
       <ApplicationTable
         applications={applications}
         onUpdate={updateApplication}
