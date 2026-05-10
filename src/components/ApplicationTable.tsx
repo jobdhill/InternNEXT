@@ -12,6 +12,7 @@ export default function ApplicationTable({
   onUpdate,
   onAddRow,
 }: Props) {
+  const today = new Date().toLocaleDateString("en-CA");
   return (
     <div className="w-full h-full overflow-x-auto space-y-3">
       <div className="rounded-xl shadow-sm overflow-hidden bg-white border border-[#F0F0F0]">
@@ -77,9 +78,12 @@ export default function ApplicationTable({
                     type="date"
                     className="w-full p-1"
                     value={app.applied}
-                    onChange={(e) =>
-                      onUpdate(app.id, { applied: e.target.value })
-                    }
+                    max={today}
+                    onChange={(e) => {
+                      const next = e.target.value;
+                      if (next && next > today) return;
+                      onUpdate(app.id, { applied: next });
+                    }}
                   />
                 </td>
 

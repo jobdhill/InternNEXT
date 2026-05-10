@@ -2,14 +2,13 @@ import { useMemo } from "react";
 import type { Application } from "../types/application";
 import { EMPTY_STATUS } from "../types/application";
 
-const INITIAL_STATUSES = new Set(["", EMPTY_STATUS, "Applied"]);
+const NO_RESPONSE_STATUSES = new Set(["", EMPTY_STATUS, "Applied", "Ghosted"]);
 
 const RESPONDED_STATUSES = new Set([
   "OA",
   "Interview",
   "Offer",
   "Rejected",
-  "Ghosted",
 ]);
 
 type Props = {
@@ -36,7 +35,7 @@ export default function ApplicationStats({ applications }: Props) {
     const total = applications.length;
 
     const movedPastApplied = applications.filter(
-      (a) => !INITIAL_STATUSES.has(a.status),
+      (a) => !NO_RESPONSE_STATUSES.has(a.status),
     ).length;
 
     const interviews = applications.filter(
@@ -130,7 +129,11 @@ function StatCard({
       >
         {value}
       </p>
-      <p className="text-[12px]  text-[#D8D9D2]">{after}</p>
+      {after ? (
+        <p className="mt-0.5 text-[11px] font-medium tracking-wide text-neutral-500">
+          {after}
+        </p>
+      ) : null}
       {hint ? (
         <p className="mt-1 text-[11px] leading-snug text-neutral-500">{hint}</p>
       ) : null}
