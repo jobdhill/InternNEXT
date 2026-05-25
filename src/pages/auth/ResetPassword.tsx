@@ -15,13 +15,15 @@ export default function ResetPassword() {
   const [done, setDone] = useState(false);
   const [hasSession, setHasSession] = useState<boolean | null>(null);
 
-  // Supabase auto-detects the recovery token in the URL because we set
-  // detectSessionInUrl: true in the client. We just confirm a session exists
-  // before letting the user submit a new password.
+  
   useEffect(() => {
-    supabase.auth.getSession().then(({ data }) => {
-      setHasSession(!!data.session);
+    const { data: sub } = supabase.auth.onAuthStateChange((event) => {
+      if (event === "PASSWORD_RECOVERY") setHasSession(true);
     });
+    supabase.auth.getSession().then(({ data }) => {
+      if (!data.session) setHasSession(false);
+    });
+    return () => sub.subscription.unsubscribe();
   }, []);
 
   async function handleSubmit(e: FormEvent) {

@@ -7,24 +7,16 @@ type Props = {
 
 export default function BrandMark({ className, size = "md" }: Props) {
   const isSm = size === "sm";
+  const wordClass = cn(
+    "font-bold tracking-tight whitespace-nowrap leading-none",
+    isSm ? "text-sm" : "text-base",
+  );
   return (
-    <div className={cn("flex items-center gap-2", className)}>
-      <div
-        className={cn(
-          "rounded-md bg-[#6366F1] text-white grid place-items-center font-bold shadow-sm",
-          isSm ? "h-5 w-5 text-[11px]" : "h-7 w-7 text-[14px]",
-        )}
-      >
-        I
+    <div className={cn("flex shrink-0 flex-nowrap items-center gap-2", className)}>
+      <div className="flex shrink-0 flex-nowrap items-baseline gap-px">
+        <span className={cn(wordClass, "text-[#0F172A]")}>Intern</span>
+        <span className={cn(wordClass, "text-[#10B981]")}>NEXT</span>
       </div>
-      <span
-        className={cn(
-          "font-bold tracking-tight text-[#0F172A]",
-          isSm ? "text-sm" : "text-base",
-        )}
-      >
-        InternTrack
-      </span>
     </div>
   );
 }

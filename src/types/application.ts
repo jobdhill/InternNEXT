@@ -1,5 +1,7 @@
 export type Application = {
   id: number
+  user_id: string
+  created_at: string
   company: string
   role: string
   applied: string
@@ -11,9 +13,14 @@ export type Application = {
 
 export const EMPTY_STATUS = "---"
 
-export function createEmptyApplication(id: number): Application {
+export function createEmptyApplication(
+  id: number,
+  user_id: string,
+): Application {
   return {
     id,
+    user_id,
+    created_at: new Date().toISOString(),
     company: "",
     role: "",
     applied: "",

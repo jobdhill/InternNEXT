@@ -39,10 +39,11 @@ function fmtMD(d: Date): string {
 
 export default function DashboardCharts({ applications }: Props) {
   return (
-    <div className="font-manrope grid grid-cols-1 lg:grid-cols-3 gap-3 mb-3">
+    <div className="font-manrope grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-3 mb-3">
       <PipelineFunnel applications={applications} />
       <ApplicationsPerWeek applications={applications} />
       <ResumePerformance applications={applications} />
+      <AppsPerInterview applications={applications} />
     </div>
   );
 }
@@ -213,7 +214,7 @@ function ApplicationsPerWeek({ applications }: Props) {
             </div>
           ))}
         </div>
-        <div className="text-[10px] text-[#9CA3AF] mt-0.5">week starting</div>
+        <div className="text-[10px] text-[#9CA3AF] mt-0.5">week starting ➡️</div>
       </div>
     </ChartCard>
   );
@@ -285,6 +286,59 @@ function ResumePerformance({ applications }: Props) {
             );
           })
         )}
+      </div>
+    </ChartCard>
+  );
+}
+
+const AVG_APPS_PER_INTERVIEW = 40;
+
+function AppsPerInterview({ applications }: Props) {
+  const stats = useMemo(() => {
+    const total = applications.length;
+    const interviews = applications.filter((a) =>
+      INTERVIEW_PLUS.has(a.status),
+    ).length;
+    const rate = interviews === 0 ? null : total / interviews;
+    return { total, interviews, rate };
+  }, [applications]);
+
+  const display =
+    stats.rate === null
+      ? "—"
+      : stats.rate < 10
+        ? stats.rate.toFixed(1)
+        : Math.round(stats.rate).toString();
+
+  const isBetterThanAvg =
+    stats.rate !== null && stats.rate <= AVG_APPS_PER_INTERVIEW;
+  const numberColor =
+    stats.rate === null
+      ? "text-[#9CA3AF]"
+      : isBetterThanAvg
+        ? "text-[#065F46]"
+        : "text-[#7C2D12]";
+
+  return (
+    <ChartCard title="Applications per interview">
+      <div className="flex-1 flex flex-col justify-center items-center text-center">
+        <div className={`text-4xl font-semibold tabular-nums ${numberColor}`}>
+          {display}
+        </div>
+        <div className="text-[11px] text-[#6B7280] mt-1">
+          apps per interview
+        </div>
+        {stats.interviews > 0 ? (
+          <div className="text-[10px] text-[#9CA3AF] mt-0.5 tabular-nums">
+            {stats.interviews}{" "}
+            {stats.interviews === 1 ? "interview" : "interviews"} ·{" "}
+            {stats.total} apps
+          </div>
+        ) : null}
+      </div>
+      <div className="mt-2 pt-2 border-t border-[#F4F5F7] text-[10px] text-[#9CA3AF] leading-snug text-center">
+        Average is around 1 interview every {AVG_APPS_PER_INTERVIEW}{" "}
+        applications.
       </div>
     </ChartCard>
   );

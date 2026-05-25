@@ -21,17 +21,33 @@ export default function Signup() {
     setLoading(true);
     setError("");
 
-    const { error } = await supabase.auth.signUp({
+    const { data, error } = await supabase.auth.signUp({
       email,
       password,
       options: { data: { name } },
     });
 
     setLoading(false);
+
     if (error) {
-      setError(error.message);
+      const msg = error.message.toLowerCase();
+      if (msg.includes("already") || msg.includes("registered")) {
+        setError("This email is already registered. Try logging in instead.");
+      } else {
+        setError(error.message);
+      }
       return;
     }
+
+    const identities = data.user?.identities;
+    const isDuplicate =
+      data.user !== null && Array.isArray(identities) && identities.length === 0;
+
+    if (isDuplicate) {
+      setError("This email is already registered. Try logging in instead.");
+      return;
+    }
+
     navigate(`/verify?email=${encodeURIComponent(email)}`);
   }
 
@@ -54,7 +70,6 @@ export default function Signup() {
       </p>
 
       <div className="mt-7">
-        {/* Google users are auto-verified by Supabase, no OTP needed. */}
         <GoogleButton label="Sign up with Google" onClick={handleGoogle} />
       </div>
 
@@ -66,7 +81,7 @@ export default function Signup() {
           <Input
             id="name"
             required
-            placeholder="Maya Patel"
+            placeholder="John Smith"
             autoComplete="name"
             value={name}
             onChange={(e) => setName(e.target.value)}
@@ -98,9 +113,6 @@ export default function Signup() {
             value={password}
             onChange={(e) => setPassword(e.target.value)}
           />
-          <p className="mt-1.5 text-[11px] text-[#9CA3AF]">
-            Must include a number and a letter.
-          </p>
         </div>
 
         {error && (

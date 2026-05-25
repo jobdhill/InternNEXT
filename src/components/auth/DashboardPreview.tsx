@@ -32,15 +32,15 @@ const ROWS: Row[] = [
     date: "Jan 12",
     status: "Interview",
   },
-  { company: "Linear", role: "Frontend Intern", date: "Jan 18", status: "OA" },
+  { company: "Capital One", role: "Frontend Intern", date: "Jan 18", status: "OA" },
   {
-    company: "Mercury",
+    company: "Amazon",
     role: "SWE Intern",
     date: "Jan 22",
     status: "Interview",
   },
   {
-    company: "Reddit",
+    company: "IBM",
     role: "Backend Intern",
     date: "Mar 10",
     status: "Offer",
@@ -60,10 +60,6 @@ export default function DashboardPreview() {
       <div className="rounded-xl bg-white border border-[#E8E9EE] overflow-hidden shadow-[0_18px_48px_-22px_rgba(15,23,42,0.18),0_2px_8px_-2px_rgba(15,23,42,0.06)]">
         <div className="flex items-center gap-2.5 px-5 py-3.5 border-b border-[#F1F2F4]">
           <BrandMark size="sm" />
-          <span className="text-[#CBD5E1]">·</span>
-          <span className="text-sm text-[#475569]">
-            Internships · Spring 2026
-          </span>
         </div>
 
         <div className="grid grid-cols-4 border-b border-[#F1F2F4]">

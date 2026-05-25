@@ -69,10 +69,10 @@ export default function ApplicationTable({
                 </td>
               </tr>
             ) : null}
-            {applications.map((app) => (
+            {applications.map((app, idx) => (
               <tr key={app.id} className="bg-white border-[#F7F7F7]">
                 <td className="p-1 border-b  text-center border-[#F0F0F0] ">
-                  {app.id}
+                  {rangeStart === 0 ? "" : rangeStart + idx}
                 </td>
 
                 <td className="p-1 border-b  border-[#F0F0F0]">
