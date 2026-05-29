@@ -115,7 +115,7 @@ export default function Terms() {
             For questions regarding these terms or to request account
             deletion, please contact us at{" "}
             <a
-              href="mailto:contact@yourdomain.com"
+              href="mailto:support@internnext.com"
               className="text-[#6366F1] hover:text-[#4F46E5] underline"
             >
               support@internnext.com
