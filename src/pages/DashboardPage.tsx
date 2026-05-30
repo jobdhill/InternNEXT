@@ -6,7 +6,7 @@ import SearchBox, { type StatusFilter } from "../components/SearchBox";
 import Navbar from "../components/dashboard/Navbar";
 import type { Application } from "../types/application";
 import { supabase } from "../lib/supabase";
-import { useAuth } from "../lib/AuthContext";
+import { useAuth } from "../lib/useAuth";
 
 const PAGE_SIZE = 15;
 
@@ -54,11 +54,8 @@ export default function DashboardPage() {
     Math.ceil(filteredApplications.length / PAGE_SIZE),
   );
 
-  useEffect(() => {
-    if (page > totalPages) setPage(totalPages);
-  }, [page, totalPages]);
-
-  const pageStart = (page - 1) * PAGE_SIZE;
+  const safePage = Math.min(page, totalPages);
+  const pageStart = (safePage - 1) * PAGE_SIZE;
   const pageApplications = filteredApplications.slice(
     pageStart,
     pageStart + PAGE_SIZE,
@@ -168,7 +165,7 @@ export default function DashboardPage() {
         <ApplicationTable
           applications={pageApplications}
           totalCount={filteredApplications.length}
-          page={Math.min(page, totalPages)}
+          page={safePage}
           pageSize={PAGE_SIZE}
           onPageChange={setPage}
           onUpdate={updateApplication}
